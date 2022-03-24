@@ -31,10 +31,7 @@ class Window:
         self.gw, self.gh = gridw, gridh
         # assuming the game screen is square (so use self.sw to avoid
         # worrying about the vertical offset)
-        if self.gw > self.gh:
-            self.square_length = self.sw / self.gw
-        else:
-            self.square_length = self.sw / self.gh
+        self.square_length = self.sw / max(self.gw, self.gh)
         # assumes screen height is larger than screen width
         self.voffset = self.sh - self.sw
         self.screen = pygame.display.set_mode((self.sw, self.sh))
@@ -83,18 +80,18 @@ class Window:
                         gridx = int(mousex // self.square_length)
                         gridy = int((mousey - self.voffset) //
                                     self.square_length)
-                        # 0 <= gridx <= self.gw
-                        # 0 <= gridy <= self.gh
-                        x_in_bounds = gridx >= 0 and gridx <= self.gw
-                        y_in_bounds = gridy >= 0 and gridy <= self.gh
+                        # 0 <= gridx < self.gw
+                        # 0 <= gridy < self.gh
+                        x_in_bounds = 0 <= gridx and gridx < self.gw
+                        y_in_bounds = 0 <= gridy and gridy < self.gh
                         if x_in_bounds and y_in_bounds:
                             cell = self.grid[gridx][gridy]
                             self.process_click(cell, event.button)
                 if event.type == pygame.KEYDOWN:
                     if event.key == 113:    # q
                         sys.exit()
-                    elif event.key == 27:   # esc
-                        print('escape')
+                    # elif event.key == 27:   # esc
+                    #     print('escape')
                     elif event.key == 114:  # r
                         self.initialize_screen()
                         # self.new_game()
@@ -157,7 +154,7 @@ class Window:
         self.place_bombs()
         self.fill_numbers()
         self.first_click = True  # technically redundant but whatever
-        self.can_play = True
+        self.can_play = True     # also technically redundant
         self.num_of_unexposed_cells = self.gw * self.gh
         self.time = 0
 
@@ -175,6 +172,7 @@ class Window:
                 pygame.draw.rect(self.screen, self.bg_color, cell.rect)
         self.make_grid()
         self.first_click = True
+        self.can_play = True
 
     def make_grid(self):
         # draw the horizontal lines
@@ -259,9 +257,9 @@ class Window:
 
     def show_text(self, text, color):
         """ Display text at the top center of the screen """
-        text = self.textfont.render(text, True, color, 'gray20')
-        location = text.get_rect(midtop=(self.sw / 2, 0))
-        self.screen.blit(text, location)
+        txt = self.textfont.render(text, True, color, 'gray20')
+        location = txt.get_rect(midtop=(self.sw / 2, 0))
+        self.screen.blit(txt, location)
 
     def expose_all(self):
         for row in self.grid:
@@ -321,9 +319,9 @@ if __name__ == '__main__':
     args = [
         750,  # screen width
         800,  # screen height
-        10,   # grid width
-        10,   # grid height
-        10    # num of bombs
+        15,   # grid width
+        15,   # grid height
+        40    # num of bombs
     ]
     win = Window(*args)
     win.run()
