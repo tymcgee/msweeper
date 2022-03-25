@@ -9,3 +9,9 @@ This was a quick little project to pass some time during a school break. During 
 Things I'd like to try in the future if I ever get around to it:
 - Center the grid if it's not square
 - Add a menu for choosing difficulty (easy/intermediate/expert) and/or allow for custom grid sizes and mine numbers
+
+# Requirements
+To run this program you'll need `pygame`:
+```
+pip install pygame
+```
